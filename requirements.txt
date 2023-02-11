@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+redis
+python-multipart
+jinja2
+debugpy
+autopep8
