@@ -1,26 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "components/base.html" %}
+{% block title %}Take Note{% endblock %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Take Note</title>
-</head>
-
-<body>
-  {% include 'components/navbar.html' %}
-  <div>
-    <p>Who do you want to take notes for?</p>
-    <ul>
-      {% for user in added_users %}
+{% block content %}
+<p>Who do you want to take notes for?</p>
+<ul>
+    {% for user in added_users %}
         <li><a href="/take_note?name={{user}}">{{ user }}</a></li>
-      {% else %}
+    {% else %}
         <li>No users added</li>
-      {% endfor %}
-    </ul>
-  </div>
-
-</body>
-
-</html>
+    {% endfor %}
+</ul>
+{% endblock %}

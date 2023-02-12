@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "components/base.html" %}
+{% block title %}Add Users{% endblock %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Users</title>
-</head>
-
-<body>
-  {% include 'components/navbar.html' %}
-  <p>Add User to Track</p>
-  <form method="post">
+{% block content %}
+<p>Add User to Track</p>
+<form method="post">
     <input name="name" value="" />
     <input type="submit" value="Add User">
-  </form>
-
-  <p>{{added}}</p>
-</body>
-
-</html>
+</form>
+{% endblock %}
