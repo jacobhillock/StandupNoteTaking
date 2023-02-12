@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Take Note</title>
+</head>
+
+<body>
+  {% include 'components/navbar.html' %}
+  <div>
+    <p>Who do you want to take notes for?</p>
+    <ul>
+      {% for day in days %}
+        <li><a href="/days_notes?date={{day}}">{{ day }}</a></li>
+      {% else %}
+        <li>No dates added</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</body>
+
+</html>
