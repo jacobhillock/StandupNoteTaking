@@ -1,0 +1,14 @@
+{% extends "components/base.html" %}
+{% block title %}{{day}}Notes{% endblock %}
+
+{% block content %}
+<p>The notes for {{day}} are:</p>
+<div>
+    {% for user, notes in notes.items() %}
+        <h2>{{ user }}</h2>
+        <pre>{{notes}}</pre>
+    {% else %}
+        <span>No notes</span>
+    {% endfor %}
+</div>
+{% endblock %}

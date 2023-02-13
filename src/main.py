@@ -78,7 +78,7 @@ def see_notes(request: Request, date: str = ''):
     for name, user_id in users.items():
         data[name] = r.hget(user_id, date)
 
-    return data
+    return templates.TemplateResponse('days_notes.html', context={'request': request, 'day': date, 'notes': data})
 
 
 @app.get("/test")
