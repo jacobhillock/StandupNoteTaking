@@ -3,6 +3,12 @@
 
 {% block content %}
 <p>Welcome! You need make sure to add all of your users! You have:</p>
+
+<div>
+  <a class="o-link-button" href="/randomize">Randomize</a>
+  <a class="o-link-button" href="/clear_randomize">Remove Randomization</a>
+</div>
+
 <ul>
     {% for user in added_users %}
         <li>{{ user }}</li>

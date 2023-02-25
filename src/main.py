@@ -1,19 +1,28 @@
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import redis
 from datetime import date
 from uuid import uuid4
+from random import random
 
 app = FastAPI()
+
+
+app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 templates = Jinja2Templates(directory="src/templates")
 USERS_KEY = 'users'
 DAYS_KEY = 'dates'
+REORDERED_USERS = 'randomized'
 
 r = redis.Redis(host="redis", port=6379, decode_responses=True)
 
 
 def all_users():
+    ordered_users = r.lrange(REORDERED_USERS, 0, -1)
+    if ordered_users:
+        return ordered_users
     return list(sorted(r.hgetall(USERS_KEY).keys()))
 
 
@@ -81,11 +90,19 @@ def see_notes(request: Request, date: str = ''):
     return templates.TemplateResponse('days_notes.html', context={'request': request, 'day': date, 'notes': data})
 
 
-@app.get("/test")
-def test():
-    return {'dates': r.lrange('dates', 0, -1)}
+@app.get('/randomize')
+def randomize_users(request: Request, order: str = ''):
+    order_list = order.split(',')
 
-# @app.get('/clear')
-# def clear_users():
-#     r.delete(USERS_KEY)
-#     return RedirectResponse('/', status_code=303)
+    users = all_users()
+    users = list(sorted(users, key=lambda x: .5 - random()))
+
+    r.delete(REORDERED_USERS)
+    r.rpush(REORDERED_USERS, *users)
+    return RedirectResponse('/', status_code=303)
+
+
+@app.get('/clear_randomize')
+def clear_randomize_users():
+    r.delete(REORDERED_USERS)
+    return RedirectResponse('/', status_code=303)
