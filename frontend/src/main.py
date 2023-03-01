@@ -62,20 +62,21 @@ def select_user_for_notes(request: Request):
     return templates.TemplateResponse('select_for_note.html', context={'request': request, 'added_users': users})
 
 
-# @app.get("/take_note")
-# def take_notes_for_user(request: Request, name: str = ''):
-#     user_id = r.hget(USERS_KEY, name)
-#     notes = r.hget(user_id, today())
-#     if not notes:
-#         notes = ''
-#     return templates.TemplateResponse('take_note.html', context={'request': request, 'name': name, 'notes': notes})
+@app.get("/take_note")
+def take_notes_for_user(request: Request, name: str = '', date: str = ''):
+    notes = get(f'user_notes?userName={name}&date={date}').json()
+
+    return templates.TemplateResponse('take_note.html', context={'request': request, 'name': name, 'notes': notes})
 
 
-# @app.post("/take_note")
-# def see_notes_for_user(request: Request, name: str = '', notes: str = Form(...)):
-#     user_id = r.hget(USERS_KEY, name)
-#     r.hset(user_id, today(), notes)
-#     return templates.TemplateResponse('taken_notes.html', context={'request': request, 'name': name, 'notes': notes})
+@app.post("/take_note")
+def see_notes_for_user(request: Request, name: str = '', notes: str = Form(...), date: str = Form(...)):
+    post('user_notes', {
+        "name": name,
+        "date": date,
+        "note": notes
+    })
+    return templates.TemplateResponse('taken_notes.html', context={'request': request, 'name': name, 'notes': notes})
 
 
 @app.get("/select_day")
@@ -85,14 +86,15 @@ def see_notes(request: Request):
     return templates.TemplateResponse('select_day.html', context={'request': request, 'days': days})
 
 
-# @app.get("/days_notes")
-# def see_notes(request: Request, date: str = ''):
-#     users = r.hgetall(USERS_KEY)
-#     data = {}
-#     for name, user_id in users.items():
-#         data[name] = r.hget(user_id, date)
+@app.get("/days_notes")
+def see_notes(request: Request, date: str = ''):
+    data = get(f'get_range?single={date}').json()
+    notes = {}
 
-#     return templates.TemplateResponse('days_notes.html', context={'request': request, 'day': date, 'notes': data})
+    if data[date]:
+        notes = data[date]
+
+    return templates.TemplateResponse('days_notes.html', context={'request': request, 'day': date, 'notes': notes})
 
 
 @app.get('/randomize')

@@ -2,9 +2,15 @@
 {% block title %}Notes for {{name}}{% endblock %}
 
 {% block content %}
+<script>
+  window.onload = () => {
+    document.getElementById('date').value=today()
+  }
+</script>
 <p>Take notes for: {{name}}</p>
 <form method="post">
     <textarea name="notes" rows="4" cols="50">{{notes}}</textarea>
+    <input id="date" name="date" value="" hidden>
     <input type="submit" value="Add notes">
 </form>
 {% endblock %}

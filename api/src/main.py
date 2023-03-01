@@ -4,6 +4,7 @@ from datetime import date
 from uuid import uuid4
 from random import random
 from src.models.add_user import AddUserModel
+from src.models.update_notes import UpdateNotesModel
 
 app = FastAPI()
 
@@ -66,14 +67,56 @@ def clear_randomize_users():
     r.delete(REORDERED_USERS)
     return True
 
-@app.get("/get_days")
-def get_day_notes(date: str = ''):
+@app.get("/get_range")
+def get_day_notes(start: str = "", end: str = "", single = ""):
+
+    if single:
+        start = single
+        end = single
+
     users = r.hgetall(USERS_KEY)
     data = {}
     for name, user_id in users.items():
-        data[name] = r.hget(user_id, date)
+        user_notes = r.hgetall(user_id)
+        for date in [key_ for key_ in user_notes.keys() if start <= key_ and key_ <= end]:
+            days_info = data.get(date, {})
+            days_info[name] = user_notes[date]
+            data[date] = days_info
     
     return data
+
+
+@app.get("/user_notes")
+def get_notes_for_user(userName: str = "", date: str = ""):
+    if not date:
+        return ''
+    
+    user_id = r.hget(USERS_KEY, userName)
+
+    if not user_id:
+        return ''
+    
+    user_note= r.hget(user_id, date)
+
+    if not user_note:
+        user_note = ''
+    
+    return user_note
+
+
+@app.post("/user_notes")
+def get_notes_for_user(user_data: UpdateNotesModel):
+    if not user_data.date:
+        return False
+    
+    user_id = r.hget(USERS_KEY, user_data.name)
+
+    if not user_id:
+        return False
+    
+    r.hset(user_id, user_data.date, user_data.note)
+    return True
+    
 
 
 @app.get("/dates")
