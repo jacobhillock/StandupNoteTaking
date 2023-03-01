@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Form, Request
 import redis
-from datetime import date
+from datetime import date, timedelta
 from uuid import uuid4
 from random import random
 from src.models.add_user import AddUserModel
@@ -74,14 +74,25 @@ def get_day_notes(start: str = "", end: str = "", single = ""):
         start = single
         end = single
 
+    if start > end:
+        start, end = end, start
+    start_date = date.fromisoformat(start)
+    end_date = date.fromisoformat(end)
+
+    # make sure range will trigger end date
+    range_delta = end_date - start_date
+    range_delta = range_delta + timedelta(days=1)
+
     users = r.hgetall(USERS_KEY)
     data = {}
     for name, user_id in users.items():
         user_notes = r.hgetall(user_id)
-        for date in [key_ for key_ in user_notes.keys() if start <= key_ and key_ <= end]:
-            days_info = data.get(date, {})
-            days_info[name] = user_notes[date]
-            data[date] = days_info
+        for delta in range(range_delta.days):
+            date_iso = (start_date + timedelta(days=delta)).isoformat()
+
+            days_info = data.get(date_iso, {})
+            days_info[name] = user_notes.get(date_iso, None)
+            data[date_iso] = days_info
     
     return data
 
