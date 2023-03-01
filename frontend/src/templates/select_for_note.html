@@ -1,0 +1,24 @@
+{% extends "components/base.html" %}
+{% block title %}Take Note{% endblock %}
+
+{% block content %}
+<script>
+  window.onload = () => {
+    const aTags = document.getElementsByTagName('a');
+    const someList = [];
+    for (let i = 0; i < aTags.length; i++) {
+        if(aTags[i].id === 'select_link') {
+        aTags[i].href = aTags[i].href + `&date=${today()}`
+      }
+    } 
+  }
+</script>
+<p>Who do you want to take notes for?</p>
+<ul>
+    {% for user in added_users %}
+        <li><a id="select_link" href="/take_note?name={{user}}">{{ user }}</a></li>
+    {% else %}
+        <li>No users added</li>
+    {% endfor %}
+</ul>
+{% endblock %}

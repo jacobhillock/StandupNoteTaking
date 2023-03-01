@@ -3,6 +3,9 @@
 
 {% block content %}
 <p>Add User to Track</p>
+{%if added%}
+<p>Just added: {{added}}</p>
+{%endif%}
 <form method="post">
     <input name="name" value="" />
     <input type="submit" value="Add User">
