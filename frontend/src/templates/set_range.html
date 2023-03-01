@@ -1,0 +1,15 @@
+{% extends "components/base.html" %}
+{% block title %}Notes for {{name}}{% endblock %}
+
+{% block content %}
+<p>Select Notes Range</p>
+<form method="post">
+  <label for="start">Start date:</label>
+  <input type="date" id="start" name="report_start" autocomplete="off" data-lpignore="true" data-form-type="other">
+  
+  <label for="end">Start date:</label>
+  <input type="date" id="end" name="report_end" autocomplete="off" data-lpignore="true" data-form-type="other">
+  
+  <input type="submit" value="Get Notes">
+</form>
+{% endblock %}

@@ -31,10 +31,6 @@ def all_users():
         return req.json()
 
 
-def today():
-    return date.today().isoformat()
-
-
 @app.get("/")
 def read_root(request: Request):
     users = all_users()
@@ -94,6 +90,17 @@ def see_notes(request: Request, date: str = ''):
         notes = data[date]
 
     return templates.TemplateResponse('days_notes.html', context={'request': request, 'day': date, 'notes': notes})
+
+
+@app.get("/range_notes")
+def see_notes(request: Request):
+    return templates.TemplateResponse('set_range.html', context={'request': request})
+
+
+@app.post("/range_notes")
+def see_notes(request: Request, report_start: str = Form(...), report_end: str = Form(...)):
+    data = get(f'get_range?start={report_start}&end={report_end}').json()
+    return templates.TemplateResponse('range_notes.html', context={'request': request, 'range': data})
 
 
 @app.get('/randomize')
