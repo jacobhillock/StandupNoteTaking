@@ -105,7 +105,7 @@ def get_notes_for_user(userName: str = "", date: str = ""):
 
 
 @app.post("/user_notes")
-def get_notes_for_user(user_data: UpdateNotesModel):
+def set_notes_for_user(user_data: UpdateNotesModel):
     if not user_data.date:
         return False
     
@@ -127,6 +127,6 @@ def get_dates():
         user_data = r.hgetall(user_id)
         dates = list(user_data.keys()) + dates
     
-    dates = list(set(dates))
+    dates = list(sorted(list(set(dates))))
 
     return dates
