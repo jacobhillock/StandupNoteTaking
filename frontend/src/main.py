@@ -82,7 +82,6 @@ def see_notes_for_user(request: Request, name: str = '', notes: str = Form(...),
 @app.get("/select_day")
 def see_notes(request: Request):
     days = get('dates').json()
-    print(f'{days=}')
     return templates.TemplateResponse('select_day.html', context={'request': request, 'days': days})
 
 
