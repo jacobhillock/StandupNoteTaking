@@ -20,6 +20,7 @@ templates = Jinja2Templates(directory="src/templates")
 def get(endpoint: str):
     return requests.get(f'{api_layer}{endpoint}')
 
+
 def post(endpoint: str, payload: dict = {}):
     print(payload)
     return requests.post(f'{api_layer}{endpoint}', data=dumps(payload))
@@ -52,6 +53,7 @@ def added_user(request: Request, name: str = Form(...)):
     else:
         return req.json()
 
+
 @app.get("/select_user")
 def select_user_for_notes(request: Request):
     users = all_users()
@@ -82,8 +84,8 @@ def see_notes(request: Request):
 
 
 @app.get("/days_notes")
-def see_notes(request: Request, date: str = ''):
-    data = get(f'get_range?single={date}').json()
+def see_notes(request: Request, date: str = '', includeBlanks: bool = False):
+    data = get(f'get_range?single={date}&includeBlanks={includeBlanks}').json()
     notes = {}
 
     if data[date]:

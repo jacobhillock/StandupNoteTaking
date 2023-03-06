@@ -62,13 +62,15 @@ def randomize_users(order: str = ''):
     else:
         return True
 
+
 @app.post('/clear_randomize')
 def clear_randomize_users():
     r.delete(REORDERED_USERS)
     return True
 
+
 @app.get("/get_range")
-def get_day_notes(start: str = "", end: str = "", single = ""):
+def get_day_notes(start: str = "", end: str = "", single: str = "", includeBlanks: bool = False):
 
     if single:
         start = single
@@ -91,9 +93,11 @@ def get_day_notes(start: str = "", end: str = "", single = ""):
             date_iso = (start_date + timedelta(days=delta)).isoformat()
 
             days_info = data.get(date_iso, {})
-            days_info[name] = user_notes.get(date_iso, None)
-            data[date_iso] = days_info
-    
+            user_note = user_notes.get(date_iso, None)
+            if user_note or includeBlanks:
+                days_info[name] = user_note
+                data[date_iso] = days_info
+
     return data
 
 
@@ -101,17 +105,17 @@ def get_day_notes(start: str = "", end: str = "", single = ""):
 def get_notes_for_user(userName: str = "", date: str = ""):
     if not date:
         return ''
-    
+
     user_id = r.hget(USERS_KEY, userName)
 
     if not user_id:
         return ''
-    
-    user_note= r.hget(user_id, date)
+
+    user_note = r.hget(user_id, date)
 
     if not user_note:
         user_note = ''
-    
+
     return user_note
 
 
@@ -119,15 +123,14 @@ def get_notes_for_user(userName: str = "", date: str = ""):
 def set_notes_for_user(user_data: UpdateNotesModel):
     if not user_data.date:
         return False
-    
+
     user_id = r.hget(USERS_KEY, user_data.name)
 
     if not user_id:
         return False
-    
+
     r.hset(user_id, user_data.date, user_data.note)
     return True
-    
 
 
 @app.get("/dates")
@@ -137,7 +140,7 @@ def get_dates():
     for _, user_id in users.items():
         user_data = r.hgetall(user_id)
         dates = list(user_data.keys()) + dates
-    
+
     dates = list(sorted(list(set(dates))))
 
     return dates
